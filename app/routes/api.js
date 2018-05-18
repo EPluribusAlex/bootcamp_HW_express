@@ -2,20 +2,20 @@ var express = require('express');
 var router = express.Router();
 var friends = require("../data/friends");
 
-router.get('/friends', function(req, res) {
-  res.json(friends);
+router.get('/', function(req, res) {
+  res.send(friends);
 });
 
 router.post('/friends', function(req, res) {
 
-	const userScores = req.scores;
+	const userScores = req.body["scores[]"];
   
-	const match = function() {
+	function matchGet() {
 		const friendVariances = [];
 		friends.forEach(friend => {
 			let differenceTotal = 0;
-			for(let i; i < friend.scores.length; i++) {
-				const difference = Math.abs(userScores[i] - friend.scores[i]);
+			for(let i = 0; i < friend.scores.length; i++) {
+				const difference = Math.abs(parseInt(userScores[i]) - friend.scores[i]);
 				differenceTotal = differenceTotal + difference;
 			}
 			friendVariances.push(differenceTotal);
@@ -25,6 +25,9 @@ router.post('/friends', function(req, res) {
 		return friends[matchIndex];
 	}
 
+	const match = matchGet();
+
+	console.log(match, "match");
 	res.json(match);
 
 });
